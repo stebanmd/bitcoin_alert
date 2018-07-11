@@ -5,7 +5,7 @@ const shell = require('electron').shell
 const ipc = require('electron').ipcMain
 
 // Adiciona o reloader para não ter que exectar toda vez o "npm start"
-require('electron-reload')(__dirname)
+//require('electron-reload')(__dirname)
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -68,9 +68,6 @@ function createWindow() {
                     }
                 }
             ]
-        },
-        {
-            label: 'Info'
         }
     ]);
     Menu.setApplicationMenu(menu);

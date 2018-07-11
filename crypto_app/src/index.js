@@ -21,21 +21,33 @@ notifyBtn.addEventListener('click', function (event) {
 });
 
 
-var price = document.querySelector('h1')
-var targetPrice = document.getElementById('targetPrice')
+var price = document.querySelector('h1');
+var targetPriceVal;
+var targetPrice = document.getElementById('targetPrice');
+
+const notification = {
+    title: 'BTC Alert',
+    body: 'BTC just beat your target price!',
+    icon: path.join(__dirname, '../assets/images/btc.png')
+}
+
 
 function getBTC() {
     axios.get('https://min-api.cryptocompare.com/data/pricemulti?fsyms=BTC&tsyms=BRL')
     .then(res => {
         const cryptos = res.data.BTC.BRL
-        price.innerHTML = 'R$ '+cryptos.toLocaleString('pt-BR')
+        price.innerHTML = 'R$ '+cryptos.toLocaleString('pt-BR');
+
+        if (targetPrice.innerHTML != '' && targetPriceVal < res.data.BTC.BRL) {
+            const myNotification = new Notification(notification.title, notification);
+            myNotification.onclick = () => {
+                console.log('clicked')
+            }
+        }
     })
 }
 getBTC();
 setInterval ( getBTC, 30000 );
-
-var targetPriceVal;
-var targetPrice = document.getElementById('targetPrice');
 
 ipc.on('targetPriceVal', function (event, arg) {
     targetPriceVal = Number(arg);
