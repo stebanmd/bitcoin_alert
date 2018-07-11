@@ -1,10 +1,11 @@
-// Adiciona o reloader para não ter que exectar toda vez o "npm start"
-require('electron-reload')(__dirname)
-
 const { app, BrowserWindow, Menu } = require('electron');
 const path = require('path');
 const url = require('url');
 const shell = require('electron').shell
+const ipc = require('electron').ipcMain
+
+// Adiciona o reloader para não ter que exectar toda vez o "npm start"
+require('electron-reload')(__dirname)
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -12,7 +13,7 @@ let win;
 
 function createWindow() {
     // Criar uma janela de navegação.
-    win = new BrowserWindow({ width: 800, height: 600 });
+    win = new BrowserWindow({ width: 870, height: 600 });
 
     // e carrega index.html do app.
     win.loadURL(url.format({
@@ -37,7 +38,21 @@ function createWindow() {
         {
             label: 'Menu',
             submenu: [
-                {label:'Adjust Notification Value'},
+                {
+                    label:'Adjust Notification Value',
+                    click() {
+                        const modalPath = path.join('file://', __dirname, 'src/add.html');
+                        let win = new BrowserWindow({ 
+                            frame: false,
+                            alwaysOnTop: true,
+                            width: 400, 
+                            height: 200 
+                        });
+                        win.on('close', function () { win = null });
+                        win.loadURL(modalPath);    
+                        win.show();
+                    }
+                },
                 {
                     label:'CoinMarketCap',
                     click() {
@@ -73,7 +88,7 @@ app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
         app.quit();
     }
-})
+});
 
 app.on('activate', () => {
     // On macOS it's common to re-create a window in the app when the
@@ -81,7 +96,8 @@ app.on('activate', () => {
     if (win === null) {
         createWindow();
     }
-})
+});
 
-// Neste arquivo, você pode incluir o resto do seu aplicativo especifico do processo
-// principal. Você também pode colocar eles em arquivos separados e requeridos-as aqui.
+ipc.on('update-notify-value', function (event, arg) {
+    win.webContents.send('targetPriceVal', arg)
+});
