@@ -1,3 +1,6 @@
+// Adiciona o reloader para não ter que exectar toda vez o "npm start"
+require('electron-reload')(__dirname)
+
 const { app, BrowserWindow, Menu } = require('electron');
 const path = require('path');
 const url = require('url');
@@ -13,7 +16,7 @@ function createWindow() {
 
     // e carrega index.html do app.
     win.loadURL(url.format({
-        pathname: path.join(__dirname, 'index.html'),
+        pathname: path.join(__dirname, 'src/index.html'),
         protocol: 'file:',
         slashes: true
       }));
