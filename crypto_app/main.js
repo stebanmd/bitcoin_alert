@@ -1,6 +1,7 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, Menu } = require('electron');
 const path = require('path');
 const url = require('url');
+const shell = require('electron').shell
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -11,12 +12,11 @@ function createWindow() {
     win = new BrowserWindow({ width: 800, height: 600 });
 
     // e carrega index.html do app.
-    //win.loadFile('index.html');
     win.loadURL(url.format({
         pathname: path.join(__dirname, 'index.html'),
         protocol: 'file:',
         slashes: true
-      }))
+      }));
 
     // Open the DevTools.
     win.webContents.openDevTools();
@@ -28,6 +28,34 @@ function createWindow() {
         // quando você deve excluir o elemento correspondente.
         win = null;
     });
+
+    // Adiciona menu
+    var menu = Menu.buildFromTemplate([
+        {
+            label: 'Menu',
+            submenu: [
+                {label:'Adjust Notification Value'},
+                {
+                    label:'CoinMarketCap',
+                    click() {
+                        shell.openExternal('http://coinmarketcap.com');
+                    },
+                    accelerator: 'CmdOrCtrl+Shift+C'
+                },
+                { type: 'separator' },
+                {
+                    label:'Exit',
+                    click() {
+                        app.quit();
+                    }
+                }
+            ]
+        },
+        {
+            label: 'Info'
+        }
+    ]);
+    Menu.setApplicationMenu(menu);
 }
 
 // Este método será chamado quando o Electron tiver finalizado
